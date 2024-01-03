@@ -15,7 +15,7 @@ class ReservationsDatabase:
         self.conn.commit()
 
     def make_reservation(self, client_id, book_isbn):
-        date_reserved = datetime.now().strftime('%D %H:%M:%S')
+        date_reserved = datetime.today()
         due_date = datetime.today() + timedelta(days=30)
         try:
             self.cursor.execute("INSERT INTO reservations VALUES (?, ?, ?, ?)",

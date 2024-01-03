@@ -20,7 +20,7 @@ class Inventory:
         if self.validate_isbn(book.isbn):
             self.db.add_book(book.title, book.author, book.isbn, book.price, book.category, book.available)
             print(
-                f"{book.title} by {book.author} | ISBN: {book.isbn} | PRICE: {book.price} | CAT: {book.category} | AVAILABLE: {book.available}")
+                f"ADDED BOOK: {book.title} by {book.author} | ISBN: {book.isbn} | PRICE: {book.price} | CAT: {book.category} | AVAILABLE: {book.available}")
         else:
             print(f"{book.isbn} Invalid Code!")
 
@@ -36,7 +36,7 @@ class Inventory:
     def update_book_availability(self, isbn, available):
         self.db.update_book_availability(isbn, available)
         print(
-            f"Target Book {isbn} changed availability to: {available}")
+            f"Target ISB {isbn} changed availability to: {available}")
 
     def get_book_by_isbn(self, isbn):
         return self.db.get_book_by_isbn(isbn)
@@ -59,6 +59,7 @@ inventory.add_book(book4)
 inventory.add_book(book5)
 
 inventory.update_book_availability('9781234567890', 0)
+inventory.update_book_availability('9781234567892', 52)
 
 
 class Users:
@@ -68,7 +69,7 @@ class Users:
     def add_client(self, client):
         self.db.add_client(client)
         print(
-            f">ADDED: {client.name} | EMAIL: {client.email} | ID: {client.clientID} | CAN RENT: {client.canRent} | PENALTIES:{client.penalties} | signed: {client.dateCreated}")
+            f">ADDED USER: {client.name} | EMAIL: {client.email} | ID: {client.clientID} | CAN RENT: {client.canRent} | PENALTIES:{client.penalties} | signed: {client.dateCreated}")
 
     def get_clients(self):
         return self.db.get_clients()
@@ -111,7 +112,8 @@ class Reservations:
         self.db.make_reservation(client_id, book_isbn)
 
     def get_reservation_by_client(self,client):
-        return self.db.get_reservation_by_client(client.clientID)
+        reservation = self.db.get_reservation_by_client(client.clientID)
+        return print(f"{reservation}")
 
 
 reservation_ledger = Reservations()

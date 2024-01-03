@@ -1,5 +1,7 @@
 from books_db import BooksDatabase
 from clients_db import ClientsDatabase
+from reservations_db import ReservationsDatabase
+from ReservationClass import Reservation
 from BookClass import Book
 from ClientClass import Client
 import re
@@ -32,7 +34,6 @@ class Inventory:
             print(f"{isbn.isbn} Invalid Code!")
 
     def update_book_availability(self, isbn, available):
-        target = self.get_book_by_isbn(isbn)
         self.db.update_book_availability(isbn, available)
         print(
             f"Target Book {isbn} changed availability to: {available}")
@@ -75,9 +76,9 @@ class Users:
     def get_client_by_code(self, id):
         return self.db.get_client_by_code(id)
 
-    def update_client_penalty(self, id, penalty):
-        print(f"Updated user {id} with {penalty} penalty.")
-        self.db.update_client_penalty(id, penalty)
+    def update_client_penalty(self, client, penalty):
+        print(f"Updated user {client.name} with {penalty} penalty.")
+        self.db.update_client_penalty(client.clientID, penalty)
 
     def delete_client(self, id):
         self.db.delete_client(id)
@@ -94,8 +95,27 @@ users.add_client(client1)
 users.add_client(client2)
 users.add_client(client3)
 
-users.update_client_penalty('5', 3)
-print(users.get_client_by_code('5'))
-users.update_client_penalty('5', 0)
-print(users.delete_client('1'))
-print(users.get_clients())
+users.update_client_penalty(client1, 3)
+print(users.get_client_by_code(5))
+users.update_client_penalty(client1, 0)
+
+
+
+class Reservations:
+    def __init__(self):
+        self.db = ReservationsDatabase('reservations')
+
+    def make_reservation(self, client, book):
+        client_id = client[2]
+        book_isbn = book[2]
+        self.db.make_reservation(client_id, book_isbn)
+
+    def get_reservation_by_client(self,client):
+        return self.db.get_reservation_by_client(client.clientID)
+
+
+reservation_ledger = Reservations()
+reservation_ledger.db.clear_reservations()
+
+reservation_ledger.make_reservation(users.get_client_by_code(9), inventory.get_book_by_isbn(9781234567890))
+reservation_ledger.get_reservation_by_client(client3)

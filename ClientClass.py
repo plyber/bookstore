@@ -9,3 +9,4 @@ class Client:
         self.penalties = 0
         self.dateCreated = datetime.datetime.now().strftime('%D %H:%M')
 
+

@@ -21,14 +21,6 @@ class BooksDatabase:
         except sqlite3.Error as e:
             print("An error occurred:", e)
 
-    def get_books(self):
-        self.cursor.execute("SELECT * FROM books")
-        return self.cursor.fetchall()
-
-    def get_book_by_isbn(self, isbn):
-        self.cursor.execute("SELECT * FROM books WHERE isbn = ?", (isbn,))
-        return self.cursor.fetchone()
-
     def update_book_availability(self, isbn, available):
         try:
             self.cursor.execute("UPDATE books SET available = ? WHERE isbn = ?",
@@ -43,6 +35,14 @@ class BooksDatabase:
             self.conn.commit()
         except sqlite3.Error as e:
             print("An error occurred:", e)
+
+    def get_books(self):
+        self.cursor.execute("SELECT * FROM books")
+        return self.cursor.fetchall()
+
+    def get_book_by_isbn(self, isbn):
+        self.cursor.execute("SELECT * FROM books WHERE isbn = ?", (isbn,))
+        return self.cursor.fetchone()
 
     def close(self):
         self.conn.close()

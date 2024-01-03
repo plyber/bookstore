@@ -1,6 +1,4 @@
 import sqlite3
-from datetime import datetime
-
 
 class ClientsDatabase:
     def __init__(self, db_name):
@@ -16,7 +14,6 @@ class ClientsDatabase:
 
     def add_client(self, client):
         try:
-            date_created = datetime.now().strftime('%D %H:%M:%S')
             self.cursor.execute("INSERT INTO clients VALUES (?, ?, ?, ?, ?, ?)",
                                 (client.name, client.email, client.clientID, client.canRent, client.penalties, client.dateCreated))
             self.conn.commit()

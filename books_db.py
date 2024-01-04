@@ -8,9 +8,10 @@ class BooksDatabase:
         self.setup()
 
     def setup(self):
+        self.cursor.execute("DROP TABLE IF EXISTS books")
         self.cursor.execute('''CREATE TABLE IF NOT EXISTS books
-                                       (title TEXT, author TEXT, isbn TEXT PRIMARY KEY, 
-                                        price REAL, category TEXT, available BOOLEAN)''')
+                                       (title TEXT, author TEXT, isbn INTEGER PRIMARY KEY, 
+                                        price REAL, category TEXT, stock BOOLEAN)''')
         self.conn.commit()
 
     def add_book(self, title, author, isbn, price, category, available):
@@ -23,7 +24,7 @@ class BooksDatabase:
 
     def update_book_availability(self, isbn, available):
         try:
-            self.cursor.execute("UPDATE books SET available = ? WHERE isbn = ?",
+            self.cursor.execute("UPDATE books SET stock = ? WHERE isbn = ?",
                                 (available, isbn))
             self.conn.commit()
         except sqlite3.Error as e:

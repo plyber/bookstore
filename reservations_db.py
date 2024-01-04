@@ -9,17 +9,18 @@ class ReservationsDatabase:
         self.setup()
 
     def setup(self):
+        self.cursor.execute("DROP TABLE IF EXISTS reservations")
         self.cursor.execute('''CREATE TABLE IF NOT EXISTS reservations
-                                       (clientID TEXT, isbn TEXT PRIMARY KEY, 
+                                       (id INTEGER PRIMARY KEY, clientID TEXT, isbn INTEGER,
                                         dateReserved DATE, dueDate DATE)''')
         self.conn.commit()
 
-    def make_reservation(self, client_id, book_isbn):
+    def make_reservation(self, reservation):
         date_reserved = datetime.today()
         due_date = datetime.today() + timedelta(days=30)
         try:
-            self.cursor.execute("INSERT INTO reservations VALUES (?, ?, ?, ?)",
-                                (client_id, book_isbn, date_reserved, due_date))
+            self.cursor.execute("INSERT INTO reservations (clientID, isbn, dateReserved, dueDate) VALUES (?, ?, ?, ?)",
+                                (reservation.clientID, reservation.isbn, date_reserved, due_date))
             self.conn.commit()
         except sqlite3.Error as e:
             print("An error occurred:", e)

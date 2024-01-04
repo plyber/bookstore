@@ -7,8 +7,9 @@ class ClientsDatabase:
         self.setup()
 
     def setup(self):
+        self.cursor.execute("DROP TABLE IF EXISTS clients")
         self.cursor.execute('''CREATE TABLE IF NOT EXISTS clients
-                                       (name TEXT, email TEXT, clientID TEXT PRIMARY KEY, 
+                                       (name TEXT, email TEXT, clientID INTEGER PRIMARY KEY, 
                                         canRent BOOLEAN, penalties INTEGER, dateCreated DATE)''')
         self.conn.commit()
 

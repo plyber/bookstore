@@ -5,7 +5,14 @@ class Book:
         self.isbn = isbn
         self.price = price
         self.category = category
-        self.stock = available
+        self.available = available
+
+    def decrement_quantity(self):
+        if self.available > 0:
+            self.available -= 1
+            return self.available
+        else:
+            print("Out of stock!")
 
     def __str__(self):
-        return f"Book(Title: {self.title}, Author: {self.author}, ISBN: {self.isbn}, Price: {self.price}, Category: {self.category}, Available: {self.stock})"
+        return f"Book(Title: {self.title}, Author: {self.author}, ISBN: {self.isbn}, Price: {self.price}, Category: {self.category}, Available: {self.available})"

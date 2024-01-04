@@ -8,6 +8,7 @@ import re
 
 
 class Inventory:
+
     def __init__(self):
         self.db = BooksDatabase('books_inventory')
 
@@ -18,9 +19,9 @@ class Inventory:
 
     def add_book(self, book):
         if self.validate_isbn(book.isbn):
-            self.db.add_book(book.title, book.author, book.isbn, book.price, book.category, book.stock)
+            self.db.add_book(book.title, book.author, book.isbn, book.price, book.category, book.available)
             print(
-                f"+ADDED BOOK: {book.title} by {book.author} | ISBN: {book.isbn} | PRICE: {book.price} | CAT: {book.category} | AVAILABLE: {book.stock}")
+                f"+ADDED BOOK: '{book.title}' by {book.author} | ISBN: {book.isbn} | PRICE: {book.price} | CAT: {book.category} | AVAILABLE: {book.available}")
         else:
             print(f"{book.isbn} Invalid Code!")
 
@@ -29,7 +30,7 @@ class Inventory:
             target = self.get_book_by_isbn(isbn)
             self.db.remove_book(isbn)
             print(
-                f"Target Book: {target.title} by {target.author} | ISBN: {target.isbn} | AVAILABLE: {target.stock} >>>>> REMOVED!")
+                f"Target Book: {target.title} by {target.author} | ISBN: {target.isbn} | AVAILABLE: {target.available} >>>>> REMOVED!")
         else:
             print(f"{isbn.isbn} Invalid Code!")
 
@@ -46,7 +47,6 @@ class Inventory:
 inventory = Inventory()
 inventory.db.clear_books()
 
-# Adding books
 book1 = Book('The Sound and the Fury', 'Gustave Flaubert', '9781234567890', 27.00, 'Fiction', 4)
 book2 = Book('Sentimental Education', 'William Faulkner', '9781234567892', 45.00, 'Fiction', 2)
 book3 = Book('The recognition of Shakuntala', 'Kālidāsa', '9781234567893', 39.00, 'Fiction', 8)
@@ -59,7 +59,7 @@ inventory.add_book(book3)
 inventory.add_book(book4)
 inventory.add_book(book5)
 
-inventory.update_book_availability('9781234567890', 0)
+inventory.update_book_availability('9781234567890', 1)
 inventory.update_book_availability('9781234567892', 52)
 
 
@@ -87,9 +87,9 @@ class Users:
         self.db.delete_client(id)
 
 
-client1 = Client('Gheorghe', 'gheorghe@gmail.com', '1')
-client2 = Client('Simona', 'simona@gmail.com', '5')
-client3 = Client('Liviu', 'liviu@gmail.com', '9')
+client1 = Client('Gheorghe', 'gheorghe@gmail.com', 1)
+client2 = Client('Simona', 'simona@gmail.com', 5)
+client3 = Client('Liviu', 'liviu@gmail.com', 9)
 
 users = Users()
 users.db.clear_clients()
@@ -100,7 +100,7 @@ users.add_client(client3)
 
 users.update_client_penalty(client1, 3)
 print(users.get_client_by_code(5))
-users.update_client_penalty(client1, 0)
+users.update_client_penalty(client1, 1)
 
 
 class Reservations:
@@ -108,10 +108,14 @@ class Reservations:
         self.db = ReservationsDatabase('reservations')
 
     def make_reservation(self, client, book):
-        reservation = Reservation(client.clientID, book.isbn)
-        self.db.make_reservation(reservation)
-        print(
-            f"+ RESERVATION CREATED SUCCESFULLY! Client: {client.name} | Client ID: {client.clientID} | Book: {book.title} | Book ISBN: {book.isbn}")
+        if book.available > 0:
+            reservation = Reservation(client.clientID, book.isbn)
+            self.db.make_reservation(reservation)
+            print(
+                f"+RESERVATION CREATED SUCCESFULLY! Client: {client.name} | Client ID: {client.clientID} | Book: '{book.title}' | Book ISBN: {book.isbn} | Available: {book.available}")
+            inventory.update_book_availability(book.isbn, book.decrement_quantity())
+        else:
+            print(f"'{book.title}' by {book.author}, ISBN {book.isbn} is out of stock!")
 
     def get_reservation_by_client(self, client):
         reservation_data = self.db.get_reservation_by_client(client.clientID)
@@ -119,6 +123,9 @@ class Reservations:
             return Reservation(id=reservation_data[0], clientID=reservation_data[1], isbn=reservation_data[2],
                                dateReserved=reservation_data[3], dueDate=reservation_data[4])
         return None
+
+    def get_reservations(self):
+        return self.db.get_reservations()
 
 
 reservation_ledger = Reservations()
@@ -128,4 +135,5 @@ reservation_ledger.make_reservation(users.get_client_by_code(9), inventory.get_b
 reservation_ledger.make_reservation(users.get_client_by_code(5), inventory.get_book_by_isbn(9781234567893))
 reservation_ledger.make_reservation(users.get_client_by_code(1), inventory.get_book_by_isbn(9781234567894))
 
-print(reservation_ledger.get_reservation_by_client(client3))
+
+print(reservation_ledger.get_reservation_by_client(client1))

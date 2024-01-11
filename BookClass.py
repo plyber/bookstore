@@ -14,5 +14,9 @@ class Book:
         else:
             print("Out of stock!")
 
+    def add_quantity(self,value):
+        self.available+=value
+        return self.available
+
     def __str__(self):
         return f"Book(Title: {self.title}, Author: {self.author}, ISBN: {self.isbn}, Price: {self.price}, Category: {self.category}, Available: {self.available})"
